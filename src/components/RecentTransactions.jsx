@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getTransactions } from '../services/api'
 
-const RecentTransactions = () => {
+const RecentTransactions = ({ refreshKey = 0 }) => {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -21,7 +21,7 @@ const RecentTransactions = () => {
     }
 
     fetchTransactions()
-  }, [])
+  }, [refreshKey])
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat('en-US', {
@@ -50,11 +50,13 @@ const RecentTransactions = () => {
         <p>No transactions yet.</p>
       ) : (
         <ul className="transaction-list">
-          {transactions.slice(0, 5).map((tx) => (
+          {transactions.slice(0, 8).map((tx) => (
             <li key={tx.id} className="transaction-item">
               <div>
                 <strong>{tx.description || 'No Description'}</strong>
-                <div className="muted-text">{formatDate(tx.transaction_date)}</div>
+                <div className="muted-text">
+                  {tx.category_name ? `${tx.category_name} · ` : ''}{formatDate(tx.transaction_date)}
+                </div>
               </div>
               <span className="transaction-amount">{formatCurrency(tx.amount)}</span>
             </li>
