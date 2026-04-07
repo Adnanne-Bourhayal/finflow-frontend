@@ -22,6 +22,9 @@ It includes:
 
 This project was built not only to demonstrate frontend development, but also product thinking, interface design, UX structure, and SaaS presentation.
 
+<img width="1440" height="809" alt="screenshots:landing" src="https://github.com/user-attachments/assets/9bae1465-5475-4345-9bda-e5af432cc379" />
+
+
 ## Main Features
 
 ### Public Product Experience
@@ -30,10 +33,16 @@ This project was built not only to demonstrate frontend development, but also pr
 - Clear call-to-action flow
 - Demo-oriented presentation
 
+<img width="1440" height="809" alt="screenshots:dashboard" src="https://github.com/user-attachments/assets/878d55f7-c29c-4f98-a582-e65626d537a0" />
+
+
 ### Demo Access
 - Demo login page
 - Protected internal application routes
 - Simple demo credentials for product exploration
+
+<img width="1440" height="809" alt="screenshots:login" src="https://github.com/user-attachments/assets/ae66ec20-00d5-41ae-8f69-6aed43bef2b2" />
+
 
 ### Internal App
 - Overview dashboard
@@ -42,6 +51,9 @@ This project was built not only to demonstrate frontend development, but also pr
 - Categories page
 - Reports page
 - Settings placeholder for future expansion
+
+<img width="1440" height="809" alt="screenshots:reports" src="https://github.com/user-attachments/assets/bbe3a35a-f054-4b9c-8fca-db1ce08ac77a" />
+
 
 ### Financial UI Modules
 - Summary cards
