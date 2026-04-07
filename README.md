@@ -1,16 +1,97 @@
-# React + Vite
+# FinFlow Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FinFlow is a premium financial operations demo platform for modern small businesses.  
+This frontend showcases a polished SaaS-style product experience with a landing page, demo login flow, and a structured internal workspace for budgets, transactions, categories, and reporting.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Website:** https://finflowbeta.vercel.app/
 
-## React Compiler
+## Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The frontend was designed to feel like a real commercial SaaS product rather than a simple dashboard demo.
 
-## Expanding the ESLint configuration
+It includes:
+- a modern marketing landing page
+- demo login access
+- an internal product workspace
+- financial overview dashboards
+- reports and analytics views
+- category and budget management flows
+- a clean, portfolio-ready UI
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project was built not only to demonstrate frontend development, but also product thinking, interface design, UX structure, and SaaS presentation.
+
+## Main Features
+
+### Public Product Experience
+- Premium landing page
+- Product-focused layout and sections
+- Clear call-to-action flow
+- Demo-oriented presentation
+
+### Demo Access
+- Demo login page
+- Protected internal application routes
+- Simple demo credentials for product exploration
+
+### Internal App
+- Overview dashboard
+- Transactions page
+- Budgets page
+- Categories page
+- Reports page
+- Settings placeholder for future expansion
+
+### Financial UI Modules
+- Summary cards
+- Budget status indicators
+- Expenses by category
+- Recent transactions
+- Reports and charts
+- Form flows for:
+  - categories
+  - budgets
+  - transactions
+
+## Tech Stack
+
+- **React**
+- **Vite**
+- **React Router**
+- **Axios**
+- **Recharts**
+- **Modern CSS**
+- **Vercel** for deployment
+
+## Product Direction
+
+FinFlow is positioned as a **premium financial operations demo product**.
+
+The current version already includes the core experience of:
+- financial visibility
+- transaction tracking
+- category structure
+- budget monitoring
+- reporting
+
+It is intentionally designed to be extendable toward:
+- invoice workflows
+- exports
+- weekly summaries
+- forecasting
+- automation
+- ERP or external tool integrations
+
+## Project Structure
+
+```bash
+src/
+  auth/
+  components/
+  layout/
+  pages/
+  services/
+  App.jsx
+  main.jsx
+  index.css
