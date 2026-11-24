@@ -1,109 +1,32 @@
-# FinFlow Frontend
+# FinFlow
 
-FinFlow is a premium financial operations demo platform for modern small businesses.  
-This frontend showcases a polished SaaS-style product experience with a landing page, demo login flow, and a structured internal workspace for budgets, transactions, categories, and reporting.
+[Open the monthly budget](https://finflowbeta.vercel.app).
 
-## Live Demo
+FinFlow helps you assign a percentage of each month's income to spending categories, record expenses and see what remains. For example, with €2,000 income and 50% for essentials, your target is €1,000. Record €600 of essentials and you have €400 left in that category. Change the month to begin a separate plan.
 
-**Website:** https://finflowbeta.vercel.app/
+## Use it
 
-## Overview
+- **Example** opens a synthetic ledger you can edit. **My ledger** starts with empty books. Entries in these workspaces are stored separately in IndexedDB in this browser.
+- Choose **Add entry**, enter income or an expense, the amount, category and date. **New category** lets you name your own income or expense groups.
+- Choose **Edit allocation** and assign whole percentages totalling up to 100. Unallocated income is the part you haven't assigned. Balance is actual income minus actual expenses. An overspent category shows how far it is over.
+- Entries and allocations persist on this browser and device. Clearing site data deletes them. Anyone using the same browser profile can open them. The public app sends no ledger entries to a server.
 
-The frontend was designed to feel like a real commercial SaaS product rather than a simple dashboard demo.
+## Run it locally
 
-It includes:
-- a modern marketing landing page
-- demo login access
-- an internal product workspace
-- financial overview dashboards
-- reports and analytics views
-- category and budget management flows
-- a clean, portfolio-ready UI
+Requires Node.js 22.12+ or a current LTS release.
 
-This project was built not only to demonstrate frontend development, but also product thinking, interface design, UX structure, and SaaS presentation.
+```sh
+npm ci
+npm run dev
+npm test
+npm run lint
+npm run build
+```
 
-<img width="1440" height="809" alt="screenshots:landing" src="https://github.com/user-attachments/assets/9bae1465-5475-4345-9bda-e5af432cc379" />
+React renders the month view and uses the same report calculations for local and self-hosted ledgers. `src/ledger.js` calculates money in cents. Percentage targets use cumulative rounding so a cent cannot be assigned twice. `src/storage.js` serializes local edits with IndexedDB write transactions.
 
+### Optional personal server
 
-## Main Features
+The default site works without a backend or credentials. To use your own [FastAPI ledger](https://github.com/Adnanne-Bourhayal/finflow-backend-minimal), set the **public API address only** in `VITE_PRIVATE_API_URL` at build time (for example `http://127.0.0.1:8000/api/v1` for a local installation). Set the frontend origin on the API. **Private API** then prompts for your server key, kept in memory until the page is reloaded or another ledger is selected. It never belongs in a Vite variable or Git. Start by creating income and expense categories in the empty server ledger.
 
-### Public Product Experience
-- Premium landing page
-- Product-focused layout and sections
-- Clear call-to-action flow
-- Demo-oriented presentation
-
-<img width="1440" height="809" alt="screenshots:dashboard" src="https://github.com/user-attachments/assets/878d55f7-c29c-4f98-a582-e65626d537a0" />
-
-
-### Demo Access
-- Demo login page
-- Protected internal application routes
-- Simple demo credentials for product exploration
-
-<img width="1440" height="809" alt="screenshots:login" src="https://github.com/user-attachments/assets/ae66ec20-00d5-41ae-8f69-6aed43bef2b2" />
-
-
-### Internal App
-- Overview dashboard
-- Transactions page
-- Budgets page
-- Categories page
-- Reports page
-- Settings placeholder for future expansion
-
-<img width="1440" height="809" alt="screenshots:reports" src="https://github.com/user-attachments/assets/bbe3a35a-f054-4b9c-8fca-db1ce08ac77a" />
-
-
-### Financial UI Modules
-- Summary cards
-- Budget status indicators
-- Expenses by category
-- Recent transactions
-- Reports and charts
-- Form flows for:
-  - categories
-  - budgets
-  - transactions
-
-## Tech Stack
-
-- **React**
-- **Vite**
-- **React Router**
-- **Axios**
-- **Recharts**
-- **Modern CSS**
-- **Vercel** for deployment
-
-## Product Direction
-
-FinFlow is positioned as a **premium financial operations demo product**.
-
-The current version already includes the core experience of:
-- financial visibility
-- transaction tracking
-- category structure
-- budget monitoring
-- reporting
-
-It is intentionally designed to be extendable toward:
-- invoice workflows
-- exports
-- weekly summaries
-- forecasting
-- automation
-- ERP or external tool integrations
-
-## Project Structure
-
-```bash
-src/
-  auth/
-  components/
-  layout/
-  pages/
-  services/
-  App.jsx
-  main.jsx
-  index.css
+Deploy the default site as a static Vite app. The build output is `dist/`. The old `/login` and `/app/*` routes also open the budget when served with the included Vercel configuration.
