@@ -6,9 +6,9 @@ FinFlow helps you assign a percentage of each month's income to spending categor
 
 ## Use it
 
-- **Example** opens a synthetic ledger you can edit. **My ledger** starts with empty books. Entries in these workspaces are stored separately in IndexedDB in this browser.
-- Choose **Add entry**, enter income or an expense, the amount, category and date. **New category** lets you name your own income or expense groups.
-- Choose **Edit allocation** and assign whole percentages totalling up to 100. Unallocated income is the part you haven't assigned. Balance is actual income minus actual expenses. An overspent category shows how far it is over.
+- The site opens a sample budget you can edit. **Open my ledger** takes you to your own books. **View example** returns to the sample. Entries in these workspaces are stored separately in IndexedDB in this browser.
+- Start a new month with **Add income** and enter your take-home amount. Then choose **Add entry** for income or expenses, the amount, category and date. **New category** lets you name your own income or expense groups.
+- Choose **Edit allocation** and assign whole percentages totalling up to 100. Unallocated income is the part you haven't assigned. Balance is actual income minus actual expenses. An overspent category shows how far it is over. The plan includes an optional benchmark for take-home pay from the [CFPB](https://files.consumerfinance.gov/f/documents/201606_cfpb_rules-to-live-by_my-spending-rule-to-live-by.pdf). It covers housing together with other essentials. You choose every target.
 - Entries and allocations persist on this browser and device. Clearing site data deletes them. Anyone using the same browser profile can open them. The public app sends no ledger entries to a server.
 
 ## Run it locally

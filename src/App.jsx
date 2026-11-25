@@ -14,7 +14,8 @@ const MONTH = new Intl.DateTimeFormat('en-IE', {
   year: 'numeric',
 })
 const DAY = new Intl.DateTimeFormat('en-IE', { day: 'numeric', month: 'short' })
-const colors = ['#306c59', '#ba662e', '#7988aa', '#a67b91']
+const budgetGuide =
+  'https://files.consumerfinance.gov/f/documents/201606_cfpb_rules-to-live-by_my-spending-rule-to-live-by.pdf'
 const monthName = (m) => MONTH.format(new Date(m + '-15T12:00:00'))
 
 function Dialog({ title, close, children }) {
@@ -44,8 +45,15 @@ function Dialog({ title, close, children }) {
   )
 }
 
-function EntryForm({ month, categories, save, newCategory, busy }) {
-  const [type, setType] = useState('expense')
+function EntryForm({
+  month,
+  categories,
+  save,
+  newCategory,
+  busy,
+  initialType,
+}) {
+  const [type, setType] = useState(initialType)
   const choices = categories.filter((c) => c.type === type)
   return (
     <form
@@ -197,7 +205,7 @@ function PlanForm({ categories, shares, income, save, busy }) {
   )
 }
 
-function Board({ workspace, mode, month }) {
+function Board({ workspace, mode, month, changeMonth }) {
   const [data, setData] = useState(null),
     [error, setError] = useState(''),
     [revision, reload] = useState(0)
@@ -273,65 +281,86 @@ function Board({ workspace, mode, month }) {
   const names = new Map(data.categories.map((c) => [c.id, c.name]))
   return (
     <>
+      <header className="heading">
+        <div>
+          <h1>Monthly budget</h1>
+          <p>
+            {mode === 'example'
+              ? 'Explore a sample budget or open your own ledger.'
+              : !income
+                ? 'Start by adding the take-home income you received this month.'
+                : 'Record expenses and compare them with your plan.'}
+          </p>
+        </div>
+        <div className="month" role="group" aria-label="Choose month">
+          <button aria-label="Previous month" onClick={() => changeMonth(-1)}>
+            ‹
+          </button>
+          <strong>{monthName(month)}</strong>
+          <button aria-label="Next month" onClick={() => changeMonth(1)}>
+            ›
+          </button>
+        </div>
+      </header>
       <section className="summary" aria-label="Monthly totals">
         <div className="balance">
           <span>Balance this month</span>
           <strong>{money(balance)}</strong>
         </div>
-        <div className="minor">
+        <div>
           <span>Income</span>
           <strong>{money(income)}</strong>
         </div>
-        <div className="minor">
+        <div>
           <span>Expenses</span>
           <strong>{money(expenses)}</strong>
         </div>
       </section>
       {error && !dialog && <p role="alert">{error}</p>}
-      <div className="columns">
-        <section className="card">
+      <div
+        className={
+          mode !== 'example' && !income ? 'columns income-first' : 'columns'
+        }
+      >
+        <section className="panel plan">
           <header>
             <h2>Monthly plan</h2>
             <button onClick={() => open('plan')}>Edit allocation</button>
           </header>
-          <p className="muted">
-            Spending targets are percentages of income recorded this month.
+          <p className="guide">
+            Targets use this month's recorded income. (A starting split for
+            take-home pay is 50% for all needs including rent, up to 30% for
+            wants, and 20% for savings and debt payments.){' '}
+            <a href={budgetGuide} target="_blank" rel="noreferrer">
+              CFPB guide
+            </a>
           </p>
-          <div className="bar" aria-hidden="true">
-            {rows.map((r, i) => (
-              <span
-                key={r.id}
-                style={{
-                  width: r.percent + '%',
-                  background: colors[i % colors.length],
-                }}
-              />
-            ))}
-          </div>
-          <ul className="budget-list">
-            {rows.map((r, i) => (
-              <li key={r.id}>
-                <span
-                  className="dot"
-                  style={{ background: colors[i % colors.length] }}
-                />
-                <div className="grow">
-                  <strong>{r.name}</strong>
-                  <small>
-                    {money(r.used)} spent of {money(r.limit)}
-                  </small>
-                </div>
-                <div className="align-right">
-                  <strong>{r.percent}%</strong>
-                  {r.used > r.limit && (
-                    <small className="over">
-                      Over by {money(r.used - r.limit)}
-                    </small>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+          <table className="budget-list">
+            <thead>
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Target</th>
+                <th scope="col">Spent</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <th scope="row">
+                    {row.name}
+                    <small>{row.percent}% of income</small>
+                  </th>
+                  <td>{money(row.limit)}</td>
+                  <td className={row.used > row.limit ? 'over' : undefined}>
+                    {money(row.used)}
+                    {row.used > row.limit && (
+                      <small>Over by {money(row.used - row.limit)}</small>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           <div className="inline-info">
             <span>Unallocated ({unallocatedPercent}%)</span>
             <strong>{money(unallocated)}</strong>
@@ -343,35 +372,35 @@ function Board({ workspace, mode, month }) {
             + New category
           </button>
         </section>
-        <section className="card">
+        <section className="panel activity">
           <header>
             <h2>Entries</h2>
-            <button className="primary" onClick={() => open('entry')}>
-              + Add entry
+            <button
+              className={mode === 'example' ? undefined : 'primary'}
+              onClick={() => open('entry', income ? 'expense' : 'income')}
+            >
+              + {income ? 'Add entry' : 'Add income'}
             </button>
           </header>
           {sorted.length ? (
             <ul className="entry-list">
-              {sorted.map((e) => (
-                <li key={e.id}>
-                  <div className={'entry-icon ' + e.type} aria-hidden="true">
-                    {e.type === 'income' ? '↙' : '↗'}
-                  </div>
+              {sorted.map((entry) => (
+                <li key={entry.id}>
                   <div className="grow">
-                    <strong>{e.label}</strong>
+                    <strong>{entry.label}</strong>
                     <small>
-                      {DAY.format(new Date(e.date + 'T12:00:00'))} ·{' '}
-                      {names.get(e.category)}
+                      {DAY.format(new Date(entry.date + 'T12:00:00'))} ·{' '}
+                      {names.get(entry.category)}
                     </small>
                   </div>
-                  <strong className={'amt ' + e.type}>
-                    {e.type === 'income' ? '+' : '−'}
-                    {money(e.cents)}
-                  </strong>
+                  <span className={'amt ' + entry.type}>
+                    {entry.type === 'income' ? '+' : '−'}
+                    {money(entry.cents)}
+                  </span>
                   <button
                     className="remove"
-                    aria-label={'Delete ' + e.label}
-                    onClick={() => open('delete', e)}
+                    aria-label={'Delete ' + entry.label}
+                    onClick={() => open('delete', entry)}
                   >
                     ×
                   </button>
@@ -380,11 +409,18 @@ function Board({ workspace, mode, month }) {
             </ul>
           ) : (
             <p className="empty">
-              No entries for this month. Add income to start planning.
+              Your entries for {monthName(month)} will appear here.
             </p>
           )}
         </section>
       </div>
+      <footer>
+        {mode === 'server'
+          ? 'Connected to your private ledger.'
+          : mode === 'example'
+            ? 'Sample data · edits stay in this browser.'
+            : 'Your ledger is saved in this browser on this device.'}
+      </footer>
       {dialog && (
         <Dialog
           title={
@@ -399,6 +435,7 @@ function Board({ workspace, mode, month }) {
         >
           {dialog === 'entry' && (
             <EntryForm
+              initialType={selected}
               month={month}
               categories={data.categories}
               busy={busy}
@@ -502,29 +539,30 @@ export default function App() {
   return (
     <main>
       <nav aria-label="Workspace">
-        <span className="brand">
-          <b aria-hidden="true">F</b> FinFlow
-        </span>
-        <div
-          className="mode segmented"
-          role="group"
-          aria-label="Choose a ledger"
-        >
-          <button
-            aria-pressed={mode === 'example'}
-            onClick={() => choose('example')}
-          >
-            Example
-          </button>
-          <button
-            aria-pressed={mode === 'personal'}
-            onClick={() => choose('personal')}
-          >
-            My ledger
-          </button>
-          {import.meta.env.VITE_PRIVATE_API_URL && (
+        <div className="identity">
+          <span className="brand">
+            <img src="/favicon.svg" alt="" width="28" height="28" />
+            FinFlow
+          </span>
+          <span className="current-ledger">
+            {mode === 'example'
+              ? 'Example ledger'
+              : mode === 'personal'
+                ? 'My ledger'
+                : 'Private API'}
+          </span>
+        </div>
+        <div className="workspace-actions">
+          {mode !== 'personal' && (
+            <button className="primary" onClick={() => choose('personal')}>
+              Open my ledger
+            </button>
+          )}
+          {mode !== 'example' && (
+            <button onClick={() => choose('example')}>View example</button>
+          )}
+          {import.meta.env.VITE_PRIVATE_API_URL && mode !== 'server' && (
             <button
-              aria-pressed={mode === 'server'}
               onClick={() => {
                 setErr('')
                 setConn(true)
@@ -535,42 +573,14 @@ export default function App() {
           )}
         </div>
       </nav>
-      <section className="heading">
-        <div>
-          <h1>
-            Monthly budget<span>.</span>
-          </h1>
-          <p>
-            {mode === 'example'
-              ? 'Explore with sample entries. Edits stay in this browser.'
-              : mode === 'personal'
-                ? 'Your ledger is saved in this browser on this device.'
-                : 'Connected to your private ledger.'}
-          </p>
-        </div>
-        <div className="month">
-          <button
-            className="square"
-            aria-label="Previous month"
-            onClick={() => setMonth(shiftMonth(month, -1))}
-          >
-            ‹
-          </button>
-          <strong>{monthName(month)}</strong>
-          <button
-            className="square"
-            aria-label="Next month"
-            onClick={() => setMonth(shiftMonth(month, 1))}
-          >
-            ›
-          </button>
-        </div>
-      </section>
       <Board
         key={mode + month}
         mode={mode}
         month={month}
         workspace={workspace}
+        changeMonth={(direction) =>
+          setMonth((current) => shiftMonth(current, direction))
+        }
       />
       {conn && (
         <Dialog title="Open private ledger" close={() => setConn(false)}>
